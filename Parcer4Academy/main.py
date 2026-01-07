@@ -2,76 +2,105 @@ import asyncio, os
 from aiogram import Bot, Dispatcher, F
 from aiogram.types import Message, FSInputFile, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 from aiogram.filters import Command
+from aiogram.fsm.state import StatesGroup, State
+from aiogram.fsm.context import FSMContext
 import pandas as pd
-from config import BOT_TOKEN
+from config import BOT_TOKEN, PASSWORD
+from defender import Defender
+from languages import Language
 
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
+defender = Defender()
+lang = Language("ru")
 
 download_dir = "files"
 os.makedirs(download_dir, exist_ok=True)
 
 
+class AuthState(StatesGroup):
+    waiting_for_password = State()
+
+async def create_profile(message: Message):
+    text = lang.welcome_text #"<b>Добро пожаловать</b> \nПришлите excel файл (с форматом .xlsx)"
+    await bot.send_message(message.chat.id, text, parse_mode="HTML")
 
 @dp.message(Command("start"))
-async def start(message: Message):
-    await bot.send_message(message.chat.id, "Скиньте")
+async def start(message, state: FSMContext):
+    if defender.antispam:
+        return
 
-async def menu(message: Message):
-    text = """<b>📗Парсер Excel таблиц📗</b> \nВыберите действие: """
-    markup_menu = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="🗓️Отчет по выставленному расписанию🗓️", callback_data="schedule")],
-        [InlineKeyboardButton(text="💡Отчет по темам занятия💡", callback_data="lesson_theme")],
-        [InlineKeyboardButton(text="👥Отчет по студентам👥", callback_data="students")],
-        [InlineKeyboardButton(text="🚶🏻‍➡️Отчет по посещаемости студентов🚶🏻‍➡️", callback_data="attendance")],
-        [InlineKeyboardButton(text="✅Отчет по проверенным домашним заданиям✅", callback_data="test_homework")],
-        [InlineKeyboardButton(text="⏳Отчет по сданным домашним заданиям⏳", callback_data="succeed_homework")],
-        [InlineKeyboardButton(text="🔙Назад🔙", callback_data="back")]
-    ])
-    photo = FSInputFile('img/academy_logo.jpg')
-    await message.answer_photo(photo, caption=text, parse_mode="HTML", reply_markup=markup_menu)
+    defender.set_antispam(True)
 
+    if not defender.security:
+        await bot.send_message(message.chat.id, lang.enter_password)
+        await state.set_state(AuthState.waiting_for_password)
+        await state.update_data()
+    else:
+        defender.set_antispam(False)
+        await create_profile(message)
+
+@dp.message(AuthState.waiting_for_password)
+async def set_password(message, state: FSMContext):
+    await state.clear()
+    if defender.password_check(PASSWORD, message.text):
+        await create_profile(message)
+    else:
+        await message.answer(lang.wpass_text) #"Неверный пароль! Введите еще раз: "
+        await state.set_state(AuthState.waiting_for_password)
+        await state.update_data()
+        return
 
 @dp.message(F.document)
 async def get_excel(message: Message):
+    if not defender.security:
+        return
+
     document = message.document
 
     if not document.file_name.endswith(".xlsx"):
-        await message.answer("Неверный формат файла!", show_alert=True)
+        await message.answer(lang.wformat_text, show_alert=True) #"Неверный формат файла!"
         return
 
     file_path = os.path.join(download_dir, document.file_name)
-
     file = await bot.get_file(document.file_id)
     await bot.download_file(file.file_path, file_path)
 
-    try:
-        df = pd.read_excel(file_path)
+    print('Файл получен')
 
-        if df.empty:
-            await message.answer("Файл пустой", show_alert=True)
-            return
+    await menu(message)
 
-        text = "📄 Содержимое файла:\n\n"
+    os.remove(file_path)
 
-        for index, row in df.iterrows():
-            row_text = " | ".join(str(cell) for cell in row.values)
-            text += f"{index + 1}. {row_text}\n"
+async def menu(message: Message):
+    text = lang.menu_text
+    markup_menu = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text=lang.menu_btn1_text, callback_data="schedule")],
+        [InlineKeyboardButton(text=lang.menu_btn2_text, callback_data="lesson_theme")],
+        [InlineKeyboardButton(text=lang.menu_btn3_text, callback_data="students")],
+        [InlineKeyboardButton(text=lang.menu_btn4_text, callback_data="attendance")],
+        [InlineKeyboardButton(text=lang.menu_btn5_text, callback_data="test_homework")],
+        [InlineKeyboardButton(text=lang.menu_btn6_text, callback_data="succeed_homework")],
+        [InlineKeyboardButton(text=lang.selected_language, callback_data="lang")],
+        [InlineKeyboardButton(text=lang.menu_back_text, callback_data="back")]
+    ])
+    photo = FSInputFile('img/academy_logo.jpg')
+    await message.answer_photo(photo=photo, caption=text, parse_mode="HTML", reply_markup=markup_menu)
 
-            if len(text) > 3500:
-                text += "\n⚠️ Данные обрезаны"
-                break
-        await message.answer(text)
-
-    except Exception as e:
-        await message.answer(f"Ошибка при чтении файла:\n{e}")
-
-    finally:
-        os.remove(file_path)
 
 @dp.callback_query(F.data.startswith("schedule"))
 async def f_schedule(call: CallbackQuery):
     pass
+
+@dp.callback_query(F.data.startswith("lang"))
+async def f_lang(call: CallbackQuery):
+    if lang.language == "ru":
+        lang.set_language("en")
+    else:
+        lang.set_language("ru")
+
+    await call.message.delete()
+    await menu(call.message)
 
 
 
