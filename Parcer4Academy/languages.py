@@ -12,6 +12,16 @@ class Language:
     wformat_text: str
     wpass_text: str
     selected_language: str
+    enter_limits : str
+    wformat_limit_text : str
+    g_lesson_theme_text : str
+    lesson_theme_report : str
+    g_students_text : str
+    students_report : str
+    g_attendance_text : str
+    attendance_report : str
+    loaded_file : str
+    unloaded_file : str
 
     TRANSLATIONS = {
         "ru": {
@@ -27,7 +37,17 @@ class Language:
             "menu_back_text": "🔙Назад🔙",
             "wformat_text": "Неверный формат файла!",
             "wpass_text": "Неверный пароль! Введите еще раз: ",
-            "selected_language" : "🌐Язык (🇷🇺Русский)"
+            "selected_language" : "🌐Язык (🇷🇺Русский)",
+            "enter_limits" : "Введите кол-во выводимых студентов (не более 3500 человек): ",
+            "wformat_limit_text" : "Неверный формат, введите ещё раз: ",
+            "g_lesson_theme_text" : "Все темы соответствуют формату",
+            "lesson_theme_report" : "Темы с неверным форматом:\n\n",
+            "g_students_text": "У студентов хорошие оценки!",
+            "students_report": "Студенты с низкими оценками:\n\n",
+            "g_attendance_text": "У преподавателей хорошая посещаемость!",
+            "attendance_report": "Преподаватели с низкой посещаемостью:\n\n",
+            "loaded_file": "Файл загружен!",
+            "unloaded_file": "Загрузите файл!"
         },
 
         "en": {
@@ -43,7 +63,17 @@ class Language:
             "menu_back_text": "🔙Return🔙",
             "wformat_text": "Invalid file format!",
             "wpass_text": "Wrong password! Please, try again: ",
-            "selected_language": "🌐Language (🇬🇧English)"
+            "selected_language": "🌐Language (🇬🇧English)",
+            "enter_limits": "Enter the number of students to be displayed (no more than 3500): ",
+            "wformat_limit_text": "Invalid format! Please, try again: ",
+            "g_lesson_theme_text": "All topics correspond to the format",
+            "lesson_theme_report": "Topics with the wrong format:\n\n",
+            "g_students_text": "The students have good grades!",
+            "students_report": "Students with low grades:\n\n",
+            "g_attendance_text": "The teachers have good attendance!",
+            "attendance_report": "Teachers with low attendance:\n\n",
+            "loaded_file": "File is loaded!",
+            "unloaded_file": "Upload the file!"
         }
     }
 
