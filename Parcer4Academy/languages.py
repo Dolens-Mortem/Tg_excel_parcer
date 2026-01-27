@@ -22,6 +22,14 @@ class Language:
     attendance_report : str
     loaded_file : str
     unloaded_file : str
+    delete_file_text : str
+    first_menu1 : str
+    first_menu2 : str
+    settings_text1 : str
+    settings_text2 : str
+    text_for_testing : str
+    week_text : str
+    month_text : str
 
     TRANSLATIONS = {
         "ru": {
@@ -35,7 +43,7 @@ class Language:
             "menu_btn5_text": "✅Отчет по проверенным домашним заданиям✅",
             "menu_btn6_text": "⏳Отчет по сданным домашним заданиям⏳",
             "menu_back_text": "🔙Назад🔙",
-            "wformat_text": "Неверный формат файла!",
+            "wformat_text": "Неверный формат файла! Отправьте файл ещё раз: ",
             "wpass_text": "Неверный пароль! Введите еще раз: ",
             "selected_language" : "🌐Язык (🇷🇺Русский)",
             "enter_limits" : "Введите кол-во выводимых студентов (не более 3500 человек): ",
@@ -46,8 +54,16 @@ class Language:
             "students_report": "Студенты с низкими оценками:\n\n",
             "g_attendance_text": "У преподавателей хорошая посещаемость!",
             "attendance_report": "Преподаватели с низкой посещаемостью:\n\n",
-            "loaded_file": "Файл загружен!",
-            "unloaded_file": "Загрузите файл!"
+            "loaded_file": "Файл загружен!✅",
+            "unloaded_file": "Загрузите файл!❔",
+            "delete_file_text": "🗑️Удалить файл",
+            "first_menu1": "▶️Запустить парсер▶️",
+            "first_menu2": "⚙️Настройки⚙️",
+            "settings_text1": "Выгрузка: 📄 Файлом .txt 📄",
+            "settings_text2": "Выгрузка: 💬 Сообщением 💬",
+            "text_for_testing": "Статистику за какое время вы хотите проверить?",
+            "week_text": "За неделю",
+            "month_text": "За месяц"
         },
 
         "en": {
@@ -61,7 +77,7 @@ class Language:
             "menu_btn5_text": "✅Checked homework report✅",
             "menu_btn6_text": "⏳Submitted homework report⏳",
             "menu_back_text": "🔙Return🔙",
-            "wformat_text": "Invalid file format!",
+            "wformat_text": "Invalid file format! Please, try again: ",
             "wpass_text": "Wrong password! Please, try again: ",
             "selected_language": "🌐Language (🇬🇧English)",
             "enter_limits": "Enter the number of students to be displayed (no more than 3500): ",
@@ -72,8 +88,16 @@ class Language:
             "students_report": "Students with low grades:\n\n",
             "g_attendance_text": "The teachers have good attendance!",
             "attendance_report": "Teachers with low attendance:\n\n",
-            "loaded_file": "File is loaded!",
-            "unloaded_file": "Upload the file!"
+            "loaded_file": "File is loaded!✅",
+            "unloaded_file": "Upload the file!❔",
+            "delete_file_text": "🗑️Delete the file",
+            "first_menu1": "▶️Execute parcer▶️",
+            "first_menu2": "⚙️Settings⚙️",
+            "settings_text1": "Uploading: 📄 With .txt file 📄",
+            "settings_text2": "Uploading: 💬 With Telegram message 💬",
+            "text_for_testing": "What time period do you want to check?",
+            "week_text": "Per week",
+            "month_text": "Per month"
         }
     }
 
